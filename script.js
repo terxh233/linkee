@@ -101,17 +101,15 @@ function initPage() {
   setupNavbar();
   checkLoginStatus();
 
-  if (path === 'services.html') {
+  if ((path === 'services.html' || path === 'index.html' || path === '') && typeof initServices === 'function') {
     initServices();
-  } else if (path === 'index.html' || path === '' || path === '/') {
-    // Home page — no special init needed
-  } else if (path === 'post-job.html') {
+  } else if (path === 'post-job.html' && typeof initPostJob === 'function') {
     initPostJob();
-  } else if (path === 'jobs.html') {
+  } else if (path === 'jobs.html' && typeof initJobs === 'function') {
     initJobs();
-  } else if (path === 'post-service.html') {
+  } else if (path === 'post-service.html' && typeof initPostService === 'function') {
     initPostService();
-  } else if (path === 'profile.html') {
+  } else if (path === 'profile.html' && typeof initProfile === 'function') {
     initProfile();
   }
 }
@@ -138,14 +136,15 @@ function checkLoginStatus() {
     }
   });
 
-  // Update profile links visibility
+  // Update profile and service links visibility
   const profileNavItems = document.querySelectorAll('.profile-nav-item');
   profileNavItems.forEach(item => {
-    if (currentUser && token) {
-      item.style.display = 'block';
-    } else {
-      item.style.display = 'none';
-    }
+    item.style.display = (currentUser && token) ? 'block' : 'none';
+  });
+
+  const serviceNavItems = document.querySelectorAll('.service-nav-item');
+  serviceNavItems.forEach(item => {
+    item.style.display = (currentUser && token && currentUser.role === 'provider') ? 'block' : 'none';
   });
 
   // Show login prompts on protected sections
